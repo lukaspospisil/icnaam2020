@@ -45,9 +45,7 @@ disp('- QP solution')
 j = (x_hat_idx-1);
 
 % assemble objects in dual problem
-B = sparse(2,N);
-B(1,2*j-1) = 1;
-B(2,2*j) = 1;
+B = sparse([1,2],[2*j-1,2*j],[1,1],2,N);
 
 BAinv = B/A; % solve system instead of computing the inverse
 A_hat = BAinv*B';
@@ -60,7 +58,8 @@ A_hat = 0.5*(A_hat + A_hat');
 % use Matlab QP solver
 % quadprog is minimizing "0.5*X'*H*X + f'*X"
 % TODO: maybe play with some algorithm options?
-lambda = quadprog(A_hat,-b_hat,[],[],[],[],-g,g);
+options = optimoptions('quadprog','Display','iter','algorithm','interior-point-convex');
+lambda = quadprog(A_hat,-b_hat,[],[],[],[],-g,g,zeros(size(b_hat)),options);
 
 % recover primal solution
 c = A\(b - B'*lambda); % solve system instead of computing the inverse
@@ -77,19 +76,19 @@ y_max = max(u_plot)+0.05;
 
 figure
 hold on
-plot(x_plot,u_plot,'b')
+plot(x_plot,u_plot,'b','linewidth',2.0)
 
 % plot constrained point
-plot([xi_s(x_hat_idx),xi_s(x_hat_idx)],[y_min,y_max],'k--')
+plot([xi_s(x_hat_idx),xi_s(x_hat_idx)],[y_min,y_max],'k--','linewidth',2.0)
 
 % plot FEM nodes
 for i=1:length(xi_s)
     [~,j] = min(abs(xi_s(i) - x_plot));
-    plot(x_plot(j(1)), u_plot(j(1)),'b.');
+    plot(x_plot(j(1)), u_plot(j(1)),'b.','markersize',15);
 end
 
-xlabel('$x$','Interpreter','latex')
-ylabel('$u(x)$','Interpreter','latex')
+xlabel('$x$','Interpreter','latex','fontsize',12)
+ylabel('$u(x)$','Interpreter','latex','fontsize',12)
 
 axis([min(xi_s),max(xi_s),y_min,y_max])
 hold off

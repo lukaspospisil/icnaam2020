@@ -5,7 +5,8 @@
 % Department of Mathematics, Faculty of Civil Engineering, VSB-TU Ostrava, Czech Republic
 % published under MIT Licence, 2020
 %
-% plot_Fig2.m - the code generates Figure 2 in the paper
+% figure_solutions.m - the code generates figure in the paper which
+% demonstrates the solution for different friction coefficients
 %
 
 clear all
@@ -64,9 +65,7 @@ disp('- QP solution')
 j = (x_hat_idx-1);
 
 % assemble objects in dual problem
-B = sparse(2,N);
-B(1,2*j-1) = 1;
-B(2,2*j) = 1;
+B = sparse([1,2],[2*j-1,2*j],[1,1],2,N);
 
 BAinv = B/A; % solve system instead of computing the inverse
 A_hat = BAinv*B';
@@ -84,7 +83,8 @@ for idx_problem=1:length(problems)
     % use Matlab QP solver
     % quadprog is minimizing "0.5*X'*H*X + f'*X"
     % TODO: maybe play with some algorithm options?
-    problems{idx_problem}.lambda = quadprog(A_hat,-b_hat,[],[],[],[],-g,g);
+    options = optimoptions('quadprog','Display','off','algorithm','interior-point-convex');
+    problems{idx_problem}.lambda = quadprog(A_hat,-b_hat,[],[],[],[],-g,g,zeros(size(b_hat)),options);
 
     % recover primal solution
     problems{idx_problem}.c = A\(b - B'*problems{idx_problem}.lambda); % solve system instead of computing the inverse
@@ -110,19 +110,19 @@ for idx_problem=1:length(problems)
     y_min(idx_problem) = min(u_plot)-0.05;
     y_max(idx_problem) = max(u_plot)+0.05;
 
-    mylegend_object(idx_problem) = plot(x_plot,u_plot,'b','Color',problems{idx_problem}.color);
+    mylegend_object(idx_problem) = plot(x_plot,u_plot,'b','Color',problems{idx_problem}.color,'linewidth',2.0);
     mylegend_text{idx_problem} = problems{idx_problem}.legend;
     
     % plot FEM nodes
     for i=1:length(xi_s)
         [~,j] = min(abs(xi_s(i) - x_plot));
-        plot(x_plot(j(1)), u_plot(j(1)),'b.','Color',problems{idx_problem}.color,'MarkerSize',12);
+        plot(x_plot(j(1)), u_plot(j(1)),'b.','Color',problems{idx_problem}.color,'MarkerSize',15);
     end
     
 end
 
 % plot constrained point
-plot([xi_s(x_hat_idx),xi_s(x_hat_idx)],[min(y_min),max(y_max)],'k--')
+plot([xi_s(x_hat_idx),xi_s(x_hat_idx)],[min(y_min),max(y_max)],'k--','linewidth',2.0)
     
 hx = xlabel('$x$','Interpreter','latex');
 hy = ylabel('$u(x)$','Interpreter','latex');
