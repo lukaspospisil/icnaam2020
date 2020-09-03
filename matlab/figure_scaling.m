@@ -111,18 +111,26 @@ mycolors{3} = [0,0.8,0];
 mycolors{4} = [0.5,0.5,0];
 mycolors{5} = [0.8,0,0.3];
 
+mylinespecs = {'-','--','-',':','-.'};
+mymarkers = {'o','x','s','^','>'};
+
 for i=1:size(times,1)
-    plot(n_s,times(i,:),'bo-','Color',mycolors{i},'linewidth',2.0);
+    plot(n_s,times(i,:),'bo-',...
+        'Color',mycolors{i},...
+        'LineStyle',mylinespecs{i},...
+        'Marker',mymarkers{i},...
+        'MarkerSize',8,...
+        'linewidth',2.0);
 end
 
 hx = xlabel('$n$','Interpreter','latex');
 hy = ylabel('time [s]','Interpreter','latex');
 
-set(hx, 'FontSize', 12);
-set(hy, 'FontSize', 12);
+set(hx, 'FontSize', 16);
+set(hy, 'FontSize', 16);
 
 l = legend('total time','primal assembly','dual assembly','dual solve', 'primal solve');
-set(l, 'interpreter', 'latex', 'location', 'northwest', 'fontsize', 12);
+set(l, 'interpreter', 'latex', 'location', 'northwest', 'fontsize', 14);
 
 hold off
 

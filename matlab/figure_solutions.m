@@ -25,21 +25,29 @@ problems{1}.g1 = 1e2;
 problems{1}.g2 = 1e2;
 problems{1}.legend = '$g_1=10^2\textrm{N},g_2=10^2\textrm{N}$';
 problems{1}.color = [1.0,0,0];
+problems{1}.markerstyle = '.';
+problems{1}.linespec = '-';
 
 problems{2}.g1 = 5e4;
 problems{2}.g2 = 1e2;
 problems{2}.legend = '$g_1=5\times10^4\textrm{N},g_2=10^2\textrm{N}$';
 problems{2}.color = [0,0,1.0];
+problems{2}.markerstyle = '.';
+problems{2}.linespec = '--';
 
 problems{3}.g1 = 1e2;
 problems{3}.g2 = 5e4;
 problems{3}.legend = '$g_1=10^2\textrm{N},g_2=5\times10^4\textrm{N}$';
 problems{3}.color = [0,0.5,0.5];
+problems{3}.markerstyle = '.';
+problems{3}.linespec = ':';
 
 problems{4}.g1 = 5e4;
 problems{4}.g2 = 5e4;
 problems{4}.legend = '$g_1=5\times10^4\textrm{N},g_2=5\times10^4\textrm{N}$';
 problems{4}.color = [0.5,0.5,0];
+problems{4}.markerstyle = '.';
+problems{4}.linespec = '-.';
 
 
 % moment of inertia of the cross-section
@@ -110,13 +118,18 @@ for idx_problem=1:length(problems)
     y_min(idx_problem) = min(u_plot)-0.05;
     y_max(idx_problem) = max(u_plot)+0.05;
 
-    mylegend_object(idx_problem) = plot(x_plot,u_plot,'b','Color',problems{idx_problem}.color,'linewidth',2.0);
+    mylegend_object(idx_problem) = plot(x_plot,u_plot,'b',...
+                        'Color',problems{idx_problem}.color,...,...   
+                        'LineStyle',problems{idx_problem}.linespec,...
+                        'linewidth',2.0);
     mylegend_text{idx_problem} = problems{idx_problem}.legend;
     
     % plot FEM nodes
     for i=1:length(xi_s)
         [~,j] = min(abs(xi_s(i) - x_plot));
-        plot(x_plot(j(1)), u_plot(j(1)),'b.','Color',problems{idx_problem}.color,'MarkerSize',15);
+        plot(x_plot(j(1)), u_plot(j(1)),'b.',...
+                        'Marker',problems{idx_problem}.markerstyle,...
+                        'Color',problems{idx_problem}.color,'MarkerSize',20);
     end
     
 end
@@ -124,14 +137,14 @@ end
 % plot constrained point
 plot([xi_s(x_hat_idx),xi_s(x_hat_idx)],[min(y_min),max(y_max)],'k--','linewidth',2.0)
     
-hx = xlabel('$x$','Interpreter','latex');
-hy = ylabel('$u(x)$','Interpreter','latex');
+hx = xlabel('$x$','Interpreter','latex','FontSize',16);
+hy = ylabel('$u(x)$','Interpreter','latex','FontSize',16);
 
-set(hx, 'FontSize', 12); 
-set(hy, 'FontSize', 12); 
+set(hx, 'FontSize', 16); 
+set(hy, 'FontSize', 16); 
 
 l = legend(mylegend_object,mylegend_text);
-set(l, 'interpreter', 'latex', 'location', 'southwest', 'fontsize', 12);
+set(l, 'interpreter', 'latex', 'location', 'southwest', 'fontsize', 14);
 
 axis([min(xi_s),max(xi_s),min(y_min),max(y_max)])
 hold off
